@@ -2,13 +2,14 @@
 Tests for the file-based provider.
 """
 
-import pytest
-import pytest_asyncio
+import os
 import tempfile
 from pathlib import Path
 
-from use_env.providers.file import FileProvider
+import pytest
+
 from use_env.providers import ProviderError
+from use_env.providers.file import FileProvider
 
 
 class TestFileProvider:
@@ -125,6 +126,3 @@ class TestFileProvider:
             assert "permission" in str(exc_info.value).lower()
         finally:
             os.chmod(str(file_path), 0o644)
-
-
-import os

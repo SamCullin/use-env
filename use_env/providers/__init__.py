@@ -27,7 +27,7 @@ from __future__ import annotations
 
 import re
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 
@@ -150,7 +150,7 @@ class Provider(ABC):
         """
         pass
 
-    async def __aenter__(self) -> "Provider":
+    async def __aenter__(self) -> Provider:
         """Async context manager entry."""
         return self
 

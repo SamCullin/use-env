@@ -166,6 +166,8 @@ if __name__ == "__main__":
     # Example usage
     import asyncio
 
+    from use_env.providers import ProviderRegistry
+
     async def main():
         # Register the provider
         register()
@@ -180,4 +182,3 @@ if __name__ == "__main__":
         # Clean up
         await provider.close()
 
-    asyncio.run(main())

@@ -7,7 +7,6 @@ including user-defined providers and global settings.
 
 from __future__ import annotations
 
-import os
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -33,7 +32,7 @@ class UseEnvConfig:
     global_options: dict[str, Any] = field(default_factory=dict)
 
     @classmethod
-    def load(cls, config_path: str | Path | None = None) -> "UseEnvConfig":
+    def load(cls, config_path: str | Path | None = None) -> UseEnvConfig:
         """
         Load configuration from a YAML file.
 
@@ -71,7 +70,7 @@ class UseEnvConfig:
         return None
 
     @classmethod
-    def _parse_config_file(cls, config_path: str | Path) -> "UseEnvConfig":
+    def _parse_config_file(cls, config_path: str | Path) -> UseEnvConfig:
         """Parse a YAML configuration file."""
         path = Path(config_path)
 

@@ -2,11 +2,12 @@
 Tests for the configuration module.
 """
 
-import pytest
 import tempfile
 from pathlib import Path
 
-from use_env.config import UseEnvConfig, ProviderConfig, ConfigurationError
+import pytest
+
+from use_env.config import ConfigurationError, ProviderConfig, UseEnvConfig
 
 
 class TestProviderConfig:

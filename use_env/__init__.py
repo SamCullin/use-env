@@ -14,7 +14,7 @@ For more information, see:
 from .cli import main
 from .config import UseEnvConfig
 from .loader import EnvLoader
-from .providers import Provider, ProviderRegistry, ProviderError
+from .providers import Provider, ProviderError, ProviderRegistry
 
 __version__ = "1.0.0"
 __all__ = [

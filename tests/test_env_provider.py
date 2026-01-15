@@ -2,12 +2,12 @@
 Tests for the environment variable provider.
 """
 
-import pytest
-import pytest_asyncio
 import os
 
-from use_env.providers.env import EnvironmentProvider
+import pytest
+
 from use_env.providers import ProviderError
+from use_env.providers.env import EnvironmentProvider
 
 
 class TestEnvironmentProvider:

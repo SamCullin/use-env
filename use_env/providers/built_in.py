@@ -4,10 +4,9 @@ This module registers all built-in providers with the ProviderRegistry.
 """
 
 from . import ProviderRegistry
+from .azure import AzureKeyVaultProvider
 from .env import EnvironmentProvider
 from .file import FileProvider
-from .azure import AzureKeyVaultProvider
-
 
 # Track whether providers have been registered
 _registered = False

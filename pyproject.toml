@@ -31,6 +31,8 @@ dev = [
     "pytest-mock>=3.12",
     "ruff>=0.4",
     "mypy>=1.8",
+    "python-semantic-release>=9.0",
+    "coverage[toml]>=7.0",
 ]
 
 # Azure Key Vault provider
@@ -98,3 +100,32 @@ python_version = "3.12"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
+
+[tool.semantic_release]
+version_variable = "pyproject.toml:version"
+branch = "main"
+upload_to_pypi = true
+upload_to_release = true
+build_command = "pip install build"
+dist_glob_patterns = ["dist/*"]
+changelog_file = "CHANGELOG.md"
+
+[tool.semantic_release.changelog]
+# changelog configuration is in pyproject.toml
+
+[tool.coverage.run]
+source = ["use_env"]
+omit = ["tests/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+]
+
+[dependency-groups]
+dev = [
+    "pyrefly>=0.48.0",
+]

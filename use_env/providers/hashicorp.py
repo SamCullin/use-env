@@ -21,6 +21,8 @@ from __future__ import annotations
 import re
 from typing import Any
 
+from hvac.exceptions import InvalidPath
+
 from . import Provider, ProviderError, ProviderInfo
 
 
@@ -132,7 +134,7 @@ class HashiCorpVaultProvider(Provider):
             self._client = hvac.Client(url=url, token=token)
 
             if self._namespace:
-                self._client.namespace = self._namespace
+                self._client.headers["X-Vault-Namespace"] = self._namespace
 
         # Parse path to separate path from field
         parts = path.split("/")
@@ -167,7 +169,7 @@ class HashiCorpVaultProvider(Provider):
 
             return json.dumps(data)
 
-        except hvac.InvalidPath:
+        except InvalidPath:
             # Try KV v1
             response = self._client.secrets.kv.v1.read_secret(
                 path=secret_path, mount_point=mount_point

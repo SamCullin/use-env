@@ -304,6 +304,34 @@ pytest --cov=use_env
 pytest tests/test_providers.py
 ```
 
+## CI/CD
+
+This project uses GitHub Actions for continuous integration and deployment:
+
+### Pull Requests
+- Runs on Python 3.12 and 3.13
+- Ruff linting and formatting checks
+- MyPy type checking
+- Pytest with coverage
+- Coverage uploaded to Codecov
+
+### Releases
+- Automatically versions using [python-semantic-release](https://python-semantic-release.readthedocs.io/)
+- Publishes to PyPI on version tags
+- Creates GitHub releases with auto-generated changelog
+
+### Commit Convention
+
+This project uses [Conventional Commits](https://www.conventionalcommits.org/):
+
+```
+feat: add new provider
+fix: resolve caching issue
+docs: update documentation
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+
 ## License
 
 MIT License - see LICENSE file for details.

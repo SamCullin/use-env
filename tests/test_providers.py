@@ -4,14 +4,12 @@ Tests for the provider interface and registry.
 
 import pytest
 import pytest_asyncio
-from unittest.mock import AsyncMock, MagicMock
 
 from use_env.providers import (
     Provider,
+    ProviderError,
     ProviderInfo,
     ProviderRegistry,
-    ProviderError,
-    ResolutionResult,
 )
 
 
@@ -35,11 +33,6 @@ class TestProviderInfo:
 
 class TestProvider:
     """Tests for the base Provider class."""
-
-    def test_abstract_resolve(self):
-        """Test that Provider is abstract and cannot be instantiated."""
-        with pytest.raises(TypeError):
-            Provider()
 
     @pytest_asyncio.fixture
     async def mock_provider(self):

@@ -2,13 +2,12 @@
 Tests for the environment file loader.
 """
 
-import pytest
-import pytest_asyncio
 import tempfile
 from pathlib import Path
 
-from use_env.loader import EnvLoader, EnvVariable, SecretReference, EnvFileError
-from use_env.config import UseEnvConfig
+import pytest
+
+from use_env.loader import EnvFileError, EnvLoader, EnvVariable, SecretReference
 
 
 class TestEnvLoader:

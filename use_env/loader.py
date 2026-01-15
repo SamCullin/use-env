@@ -69,7 +69,7 @@ class EnvLoader:
         output_path: str | Path | None = None,
         strict: bool = True,
         stdin_content: str | None = None,
-    ) -> "LoadResult":
+    ) -> LoadResult:
         """
         Load an environment file and resolve all secret references.
 
@@ -84,14 +84,16 @@ class EnvLoader:
         """
         output_to_stdout = str(output_path) == "-"
 
+        # Ensure input_path is a Path if provided
+        if input_path is not None:
+            input_path = Path(input_path)
+
         # Determine content source
         if stdin_content is not None:
             # Piped input
             content = stdin_content
             effective_input_path = Path("-")
         elif input_path is not None:
-            input_path = Path(input_path)
-
             if not input_path.exists():
                 raise EnvFileError(f"Input file not found: {input_path}")
 
@@ -219,7 +221,6 @@ class EnvLoader:
 
     def _register_provider(self, config: Any) -> None:
         """Register a provider from configuration."""
-        provider_class = ProviderRegistry.get(config.type)
         instance = ProviderRegistry.get(config.type, config.config)
         self._providers[config.name] = instance
 

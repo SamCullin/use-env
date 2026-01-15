@@ -17,7 +17,7 @@ from rich.panel import Panel
 from rich.table import Table
 
 from .config import UseEnvConfig
-from .loader import EnvLoader, EnvFileError
+from .loader import EnvFileError, EnvLoader
 from .providers import ProviderRegistry
 
 # Import to register built-in providers
@@ -157,6 +157,8 @@ Examples:
         else:
             args.output = ".env"
             output_to_stdout = False
+    else:
+        output_to_stdout = False
 
     return await _process_file(
         input_source=input_source,
@@ -202,7 +204,6 @@ async def _process_file(
     verbose: int,
 ) -> int:
     """Process an environment file."""
-    from .loader import LoadResult
 
     if verbose > 0:
         rprint(f"[cyan]Input source:[/cyan] {input_source}")
@@ -238,7 +239,7 @@ async def _process_file(
 
         if verbose > 0:
             if output_to_stdout:
-                rprint(f"[green]Output:[/green] stdout")
+                rprint("[green]Output:[/green] stdout")
             else:
                 rprint(f"[green]Output file:[/green] {result.output_path}")
             rprint(f"[green]Variables:[/green] {result.variables_count}")

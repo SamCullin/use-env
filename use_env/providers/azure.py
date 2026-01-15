@@ -97,7 +97,7 @@ class AzureKeyVaultProvider(Provider):
     async def _fetch_secret(self, vault_name: str, secret_name: str) -> str:
         """Fetch a secret using Azure SDK."""
         try:
-            from azure.identity import DefaultCredential
+            from azure.identity import DefaultAzureCredential
             from azure.keyvault.secrets import SecretClient
         except ImportError as exc:
             raise ProviderError(
@@ -111,11 +111,17 @@ class AzureKeyVaultProvider(Provider):
         vault_url = f"https://{vault_name}.vault.azure.net"
 
         if self._client is None:
-            credential = DefaultCredential()
+            credential = DefaultAzureCredential()
             self._client = SecretClient(vault_url=vault_url, credential=credential)
 
         # Get the secret
         secret = self._client.get_secret(secret_name)
+        if secret.value is None:
+            raise ProviderError(
+                f"Secret '{secret_name}' has no value",
+                provider=self.info.name,
+                reference=f"{vault_name}/{secret_name}",
+            )
         return secret.value
 
     def configure(self, config: dict[str, Any]) -> None:
