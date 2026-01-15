@@ -241,6 +241,72 @@ ANOTHER_VALID=value2
 
         await loader.close()
 
+    @pytest.mark.asyncio
+    async def test_stdin_input(self, secret_file):
+        """Test loading from stdin content."""
+        import os
+
+        os.environ["TEST_API_KEY"] = "test_api_key"
+
+        stdin_content = f"""# Test stdin input
+DATABASE_HOST=localhost
+API_KEY=${{env:TEST_API_KEY}}
+SECRET=${{file:{secret_file}}}
+"""
+
+        loader = EnvLoader()
+        result = await loader.load(stdin_content=stdin_content, output_path="-")
+
+        assert result.variables_count == 3
+        assert result.secrets_resolved == 2
+        assert "test_api_key" in result.resolved_content
+        assert "file_secret_value" in result.resolved_content
+        assert "DATABASE_HOST=localhost" in result.resolved_content
+
+        await loader.close()
+
+    @pytest.mark.asyncio
+    async def test_stdin_input_with_references(self, secret_file):
+        """Test that references are resolved from stdin."""
+        stdin_content = f"""DB_PASSWORD=${{file:{secret_file}}}
+API_KEY=static_value
+"""
+
+        loader = EnvLoader()
+        result = await loader.load(stdin_content=stdin_content)
+
+        assert result.secrets_resolved == 1
+        assert "file_secret_value" in result.resolved_content
+        assert "static_value" in result.resolved_content
+
+        await loader.close()
+
+    @pytest.mark.asyncio
+    async def test_output_to_stdout(self, temp_dir, env_file, secret_file):
+        """Test output to stdout (output_path='-')."""
+        import os
+
+        os.environ["TEST_API_KEY"] = "test_api_key"
+
+        loader = EnvLoader()
+        result = await loader.load(str(env_file), output_path="-")
+
+        assert str(result.output_path) == "-"
+        assert result.resolved_content is not None
+        assert "test_api_key" in result.resolved_content
+
+        await loader.close()
+
+    @pytest.mark.asyncio
+    async def test_no_input_raises_error(self):
+        """Test that providing no input raises an error."""
+        loader = EnvLoader()
+
+        with pytest.raises(Exception):  # EnvFileError
+            await loader.load()
+
+        await loader.close()
+
 
 class TestEnvVariable:
     """Tests for the EnvVariable dataclass."""

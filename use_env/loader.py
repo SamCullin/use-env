@@ -65,32 +65,52 @@ class EnvLoader:
 
     async def load(
         self,
-        input_path: str | Path,
+        input_path: str | Path | None = None,
         output_path: str | Path | None = None,
         strict: bool = True,
+        stdin_content: str | None = None,
     ) -> "LoadResult":
         """
         Load an environment file and resolve all secret references.
 
         Args:
-            input_path: Path to the input .env file
-            output_path: Optional path for the output .env file
+            input_path: Path to the input .env file (optional if stdin_content provided)
+            output_path: Optional path for the output .env file, or "-" for stdout
             strict: If True, raise on any resolution errors
+            stdin_content: Content from stdin (for piped input)
 
         Returns:
             A LoadResult containing the resolved content and metadata
         """
-        input_path = Path(input_path)
+        output_to_stdout = str(output_path) == "-"
 
-        if not input_path.exists():
-            raise EnvFileError(f"Input file not found: {input_path}")
+        # Determine content source
+        if stdin_content is not None:
+            # Piped input
+            content = stdin_content
+            effective_input_path = Path("-")
+        elif input_path is not None:
+            input_path = Path(input_path)
+
+            if not input_path.exists():
+                raise EnvFileError(f"Input file not found: {input_path}")
+
+            content = input_path.read_text()
+            effective_input_path = input_path
+        else:
+            raise EnvFileError("Either input_path or stdin_content must be provided")
 
         # Determine output path
-        if output_path is None:
-            output_path = input_path.parent / ".env"
+        if output_to_stdout:
+            final_output_path = Path("-")
+        elif output_path is None:
+            if input_path:
+                final_output_path = input_path.parent / ".env"
+            else:
+                final_output_path = Path(".env")
+        else:
+            final_output_path = Path(output_path)
 
-        # Read the input file content
-        content = input_path.read_text()
         lines = content.splitlines()
         variables = self._parse_lines(lines)
 
@@ -119,16 +139,18 @@ class EnvLoader:
         if errors and strict:
             raise EnvFileError(f"Encountered {len(errors)} error(s) while resolving secrets")
 
-        # Replace references in content
         resolved_content = self._replace_references(content, resolved_values)
 
         # Write output
-        output_path = Path(output_path)
-        output_path.write_text(resolved_content)
+        if output_to_stdout:
+            # Output handled by caller for stdout
+            pass
+        else:
+            final_output_path.write_text(resolved_content)
 
         return LoadResult(
-            input_path=input_path,
-            output_path=output_path,
+            input_path=effective_input_path,
+            output_path=final_output_path,
             resolved_content=resolved_content,
             variables_count=len(variables),
             secrets_resolved=len(resolved_values),

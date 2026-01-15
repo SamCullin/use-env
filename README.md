@@ -106,6 +106,26 @@ use-env .env.dev
 
 This will create a `.env` file with all references resolved.
 
+### Piping Support
+
+The tool supports piping for flexible workflows:
+
+```bash
+# Pipe input from stdin, output to stdout
+cat .env.dev | use-env
+
+# Pipe input, save output to file
+cat .env.dev | use-env > .env
+
+# Pipe output to another command
+use-env .env.prod | grep DB_HOST
+
+# Chain with other tools
+cat .env.staging | use-env | jq '.DATABASE_'
+```
+
+When input comes from stdin, output automatically goes to stdout. This enables standard Unix workflows.
+
 ## Core Providers (No Extra Dependencies)
 
 ### Environment Provider (`env`)
