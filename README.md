@@ -1,6 +1,24 @@
 # use-env
 
+[![Build & Release](https://github.com/SamCullin/resume-md/actions/workflows/publish.yml/badge.svg)](https://github.com/SamCullin/resume-md/actions/workflows/publish.yml)
+[![CI](https://github.com/SamCullin/resume-md/actions/workflows/ci.yml/badge.svg)](https://github.com/SamCullin/resume-md/actions/workflows/ci.yml)
+[![PyPI version](https://badge.fury.io/py/resume-md.svg)](https://badge.fury.io/py/resume-md)
+[![GitHub Release](https://img.shields.io/github/v/release/SamCullin/resume-md)](https://github.com/SamCullin/resume-md/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/SamCullin/resume-md/graphs/commit-activity)
+[![Downloads](https://img.shields.io/pypi/dm/resume-md.svg)](https://pypi.org/project/resume-md/)
+[![GitHub issues](https://img.shields.io/github/issues/SamCullin/resume-md.svg)](https://github.com/SamCullin/resume-md/issues)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](https://makeapullrequest.com)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
+[![semantic-release: angular](https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
+
+[use-env](/) > [use_env](/use_env/) > [providers](/use_env/providers/) > [tests](/tests/) > [.github](/.github/) > [docs](/docs/) > [examples](/examples/)
+
+[!['Buy Me A Coffee'](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/samcullin)
+
+## Summary
 **Environment file processor with extensible secret providers.**
+
 
 `use-env` is a CLI tool for developers that processes environment files with secret references and resolves them from various providers (vault, environment variables, files, etc.).
 
