@@ -288,7 +288,7 @@ Keep template files in version control:
 # .env.dev.template (committed to git)
 DATABASE_HOST=localhost
 DATABASE_PORT=5432
-API_KEY=${env:MY_API_KEY}  # Set in environment, throws if not found
+API_KEY=${env:MY_API_KEY}  # Set in environment
 ```
 
 ### 2. Multiple Environments
