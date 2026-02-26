@@ -27,14 +27,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
 
+      - name: Run Pyrefly type checking
+        run: pyrefly check use_env/ tests/
+
       - name: Run ruff check
         run: ruff check use_env/ tests/
 
       - name: Run ruff format check
         run: ruff format --check use_env/ tests/
-
-      - name: Run mypy type checking
-        run: mypy use_env/ tests/
 
       - name: Run pytest with coverage
         run: pytest --cov=use_env --cov-report=xml --cov-report=term tests/

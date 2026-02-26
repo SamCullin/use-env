@@ -198,15 +198,21 @@ providers:
 
 ### Pre-commit Hook
 
-Add to `.pre-commit-config.yaml`:
+This repository ships a pre-configured `.pre-commit-config.yaml` that runs:
 
-```yaml
-- repo: https://github.com/yourusername/use-env
-  rev: v1.0.0
-  hooks:
-    - id: use-env
-      args: [--strict]
+- `pyrefly check use_env/ tests/`
+- `ruff check use_env/ tests/`
+- `ruff format use_env/ tests/`
+- `pytest`
+
+Install the hooks locally with:
+
+```bash
+uv sync --all-extras --dev
+uv tool install pre-commit
 ```
+
+Every commit will now enforce type checking and lint/format consistency automatically.
 
 ### Makefile
 
@@ -264,11 +270,12 @@ jobs:
           AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
           AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: env-file
-          path: .env
+      - name: Run script with loaded creds
+        run: |
+          set -a
+          source .env
+          set +a
+          ./scripts/run-with-creds.sh
 ```
 
 ## Best Practices
@@ -281,7 +288,7 @@ Keep template files in version control:
 # .env.dev.template (committed to git)
 DATABASE_HOST=localhost
 DATABASE_PORT=5432
-API_KEY=${env:MY_API_KEY}  # Set in environment
+API_KEY=${env:MY_API_KEY}  # Set in environment, throws if not found
 ```
 
 ### 2. Multiple Environments

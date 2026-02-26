@@ -14,15 +14,15 @@ Thank you for your interest in contributing! This document outlines the guidelin
 # Clone and install
 git clone https://github.com/YOUR_USERNAME/use-env.git
 cd use-env
-pip install -e ".[dev]"
+uv sync --all-extras --dev
 
 # Run tests
 pytest
 
 # Run linters
+pyrefly check use_env/ tests/
 ruff check use_env/ tests/
-ruff format --check use_env/ tests/
-mypy use_env/ tests/
+ruff format use_env/ tests/
 ```
 
 ## Commit Message Convention
