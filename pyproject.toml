@@ -128,4 +128,5 @@ exclude_lines = [
 [dependency-groups]
 dev = [
     "pyrefly>=0.48.0",
+    "pytest-asyncio>=1.3.0",
 ]

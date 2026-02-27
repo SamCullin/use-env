@@ -16,28 +16,26 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+      - name: Set up uv with Python ${{ matrix.python-version }}
+        uses: astral-sh/setup-uv@v3
         with:
           python-version: ${{ matrix.python-version }}
-          cache: 'pip'
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install -e ".[dev]"
+          uv sync --all-extras --dev
+
+      - name: Run Pyrefly type checking
+        run: uv run pyrefly check use_env/ tests/
 
       - name: Run ruff check
-        run: ruff check use_env/ tests/
+        run: uv run ruff check use_env/ tests/
 
       - name: Run ruff format check
-        run: ruff format --check use_env/ tests/
-
-      - name: Run mypy type checking
-        run: mypy use_env/ tests/
+        run: uv run ruff format --check use_env/ tests/
 
       - name: Run pytest with coverage
-        run: pytest --cov=use_env --cov-report=xml --cov-report=term tests/
+        run: uv run pytest --cov=use_env --cov-report=xml --cov-report=term tests/
 
       - name: Upload coverage report
         uses: codecov/codecov-action@v4

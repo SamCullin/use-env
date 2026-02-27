@@ -1,13 +1,14 @@
 # use-env
 
-[![Build & Release](https://github.com/SamCullin/resume-md/actions/workflows/publish.yml/badge.svg)](https://github.com/SamCullin/resume-md/actions/workflows/publish.yml)
-[![CI](https://github.com/SamCullin/resume-md/actions/workflows/ci.yml/badge.svg)](https://github.com/SamCullin/resume-md/actions/workflows/ci.yml)
-[![PyPI version](https://badge.fury.io/py/resume-md.svg)](https://badge.fury.io/py/resume-md)
-[![GitHub Release](https://img.shields.io/github/v/release/SamCullin/resume-md)](https://github.com/SamCullin/resume-md/releases)
+[![Release](https://github.com/SamCullin/use-env/actions/workflows/release.yml/badge.svg)](https://github.com/SamCullin/use-env/actions/workflows/release.yml)
+[![Publish](https://github.com/SamCullin/use-env/actions/workflows/publish.yml/badge.svg)](https://github.com/SamCullin/use-env/actions/workflows/publish.yml)
+[![CI](https://github.com/SamCullin/use-env/actions/workflows/ci.yml/badge.svg)](https://github.com/SamCullin/use-env/actions/workflows/ci.yml)
+[![PyPI version](https://badge.fury.io/py/use-env.svg)](https://badge.fury.io/py/use-env)
+[![GitHub Release](https://img.shields.io/github/v/release/SamCullin/use-env)](https://github.com/SamCullin/use-env/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/SamCullin/resume-md/graphs/commit-activity)
-[![Downloads](https://img.shields.io/pypi/dm/resume-md.svg)](https://pypi.org/project/resume-md/)
-[![GitHub issues](https://img.shields.io/github/issues/SamCullin/resume-md.svg)](https://github.com/SamCullin/resume-md/issues)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/SamCullin/use-env/graphs/commit-activity)
+[![Downloads](https://img.shields.io/pypi/dm/use-env.svg)](https://pypi.org/project/use-env/)
+[![GitHub issues](https://img.shields.io/github/issues/SamCullin/use-env.svg)](https://github.com/SamCullin/use-env/issues)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](https://makeapullrequest.com)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
 [![semantic-release: angular](https://img.shields.io/badge/semantic--release-angular-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
@@ -335,8 +336,9 @@ This project uses GitHub Actions for continuous integration and deployment:
 
 ### Releases
 - Automatically versions using [python-semantic-release](https://python-semantic-release.readthedocs.io/)
-- Publishes to PyPI on version tags
-- Creates GitHub releases with auto-generated changelog
+- Maintains a release PR branch from `main`/`master`
+- Pushes a new version tag when a release PR is merged
+- Publishes to PyPI and creates a GitHub Release on version tags
 
 ### Commit Convention
 
