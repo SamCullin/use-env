@@ -1,6 +1,7 @@
 # use-env
 
-[![Build & Release](https://github.com/SamCullin/use-env/actions/workflows/publish.yml/badge.svg)](https://github.com/SamCullin/use-env/actions/workflows/publish.yml)
+[![Release](https://github.com/SamCullin/use-env/actions/workflows/release.yml/badge.svg)](https://github.com/SamCullin/use-env/actions/workflows/release.yml)
+[![Publish](https://github.com/SamCullin/use-env/actions/workflows/publish.yml/badge.svg)](https://github.com/SamCullin/use-env/actions/workflows/publish.yml)
 [![CI](https://github.com/SamCullin/use-env/actions/workflows/ci.yml/badge.svg)](https://github.com/SamCullin/use-env/actions/workflows/ci.yml)
 [![PyPI version](https://badge.fury.io/py/use-env.svg)](https://badge.fury.io/py/use-env)
 [![GitHub Release](https://img.shields.io/github/v/release/SamCullin/use-env)](https://github.com/SamCullin/use-env/releases)
@@ -335,8 +336,9 @@ This project uses GitHub Actions for continuous integration and deployment:
 
 ### Releases
 - Automatically versions using [python-semantic-release](https://python-semantic-release.readthedocs.io/)
-- Publishes to PyPI on version tags
-- Creates GitHub releases with auto-generated changelog
+- Maintains a release PR branch from `main`/`master`
+- Pushes a new version tag when a release PR is merged
+- Publishes to PyPI and creates a GitHub Release on version tags
 
 ### Commit Convention
 

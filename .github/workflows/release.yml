@@ -1,49 +1,83 @@
 name: Release
 
 on:
-  release:
-    types: [published]
+  push:
+    branches: [main, master]
+  pull_request:
+    types: [closed]
+    branches: [main, master]
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
-  release:
+  prepare_release_pr:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          persist-credentials: false
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-          cache: 'pip'
+          cache: "pip"
 
-      - name: Install dependencies
+      - name: Install semantic-release
         run: |
           python -m pip install --upgrade pip
-          pip install build twine python-semantic-release
+          pip install python-semantic-release
 
-      - name: Configure git
+      - name: Prepare release changes
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          semantic-release version --no-commit --no-tag --no-push --no-vcs-release --skip-build
 
-      - name: Build and publish to PyPI
-        env:
-          PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
-        run: |
-          semantic-release version
-          semantic-release publish
-
-      - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create or update release PR
+        uses: peter-evans/create-pull-request@v6
         with:
-          tag_name: ${{ github.event.release.tag_name }}
-          release_name: Release ${{ github.event.release.tag_name }}
-          body: ${{ github.event.release.body }}
-          draft: false
-          prerelease: false
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore(release): prepare release"
+          branch: "release/${{ github.ref_name }}"
+          base: "${{ github.ref_name }}"
+          title: "chore(release): prepare release"
+          body: |
+            Automated release PR.
+
+            This branch is refreshed from `${{ github.ref_name }}` and includes version/changelog updates from semantic-release.
+          labels: release
+          delete-branch: false
+
+  tag_release:
+    if: |
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.merged == true &&
+      startsWith(github.event.pull_request.head.ref, 'release/')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout merged commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+          fetch-depth: 0
+
+      - name: Create and push version tag
+        run: |
+          VERSION="$(python - <<'PY'
+          import tomllib
+          with open('pyproject.toml', 'rb') as f:
+              print(tomllib.load(f)['project']['version'])
+          PY
+          )"
+          TAG="v${VERSION}"
+
+          if git rev-parse "${TAG}" >/dev/null 2>&1; then
+            echo "Tag ${TAG} already exists. Skipping."
+            exit 0
+          fi
+
+          git tag "${TAG}" "${{ github.event.pull_request.merge_commit_sha }}"
+          git push origin "${TAG}"

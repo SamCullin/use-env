@@ -87,14 +87,14 @@ Use the azure-keyvault provider instead.
 
 ## Release Process
 
-Releases are automatically handled by [python-semantic-release](https://python-semantic-release.readthedocs.io/).
+Releases are automatically handled by [python-semantic-release](https://python-semantic-release.readthedocs.io/) plus GitHub Actions.
 
-When a PR is merged to main:
-1. Semantic release analyzes commits
-2. Version is bumped according to commit messages
-3. Changelog is generated
-4. GitHub release is created
-5. Package is published to PyPI
+Release flow:
+1. Commits merge into `main`/`master`.
+2. The release workflow runs semantic-release versioning and updates a release PR branch (`release/main` or `release/master`).
+3. When the release PR is merged, the workflow creates and pushes a `vX.Y.Z` tag from the merged commit.
+4. The publish workflow triggers on that tag.
+5. The publish workflow uploads to PyPI and creates the GitHub Release.
 
 ## Code Style
 
