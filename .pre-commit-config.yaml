@@ -3,21 +3,21 @@ repos:
     hooks:
       - id: pyrefly-check
         name: Pyrefly type check
-        entry: pyrefly check use_env/ tests/
+        entry: uv run pyrefly check use_env/ tests/
         language: system
         pass_filenames: false
       - id: ruff-check
         name: Ruff lint
-        entry: ruff check use_env/ tests/
+        entry: uv run ruff check use_env/ tests/
         language: system
         pass_filenames: false
       - id: ruff-format
         name: Ruff format
-        entry: ruff format use_env/ tests/
+        entry: uv run ruff format use_env/ tests/
         language: system
         pass_filenames: false
       - id: pytest
         name: PyTest
-        entry: pytest
+        entry: uv run pytest
         language: system
         pass_filenames: false
