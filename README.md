@@ -2,11 +2,11 @@
 
 [![Release](https://github.com/SamCullin/use-env/actions/workflows/release.yml/badge.svg)](https://github.com/SamCullin/use-env/actions/workflows/release.yml)
 [![CI](https://github.com/SamCullin/use-env/actions/workflows/ci.yml/badge.svg)](https://github.com/SamCullin/use-env/actions/workflows/ci.yml)
-[![PyPI version](https://badge.fury.io/py/use-env.svg)](https://badge.fury.io/py/use-env)
+[![PyPI version](https://badge.fury.io/py/use-env-insurgence.svg)](https://badge.fury.io/py/use-env-insurgence)
 [![GitHub Release](https://img.shields.io/github/v/release/SamCullin/use-env)](https://github.com/SamCullin/use-env/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/SamCullin/use-env/graphs/commit-activity)
-[![Downloads](https://img.shields.io/pypi/dm/use-env.svg)](https://pypi.org/project/use-env/)
+[![Downloads](https://img.shields.io/pypi/dm/use-env-insurgence.svg)](https://pypi.org/project/use-env-insurgence/)
 [![GitHub issues](https://img.shields.io/github/issues/SamCullin/use-env.svg)](https://github.com/SamCullin/use-env/issues)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](https://makeapullrequest.com)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&logoColor=white)](https://conventionalcommits.org)
@@ -35,10 +35,10 @@
 
 ```bash
 # Core package only (env and file providers)
-pip install use-env
+pip install use-env-insurgence
 
 # Or using uv
-uv pip install use-env
+uv pip install use-env-insurgence
 ```
 
 ### Optional Cloud Providers
@@ -47,22 +47,22 @@ Install only the providers you need:
 
 ```bash
 # Azure Key Vault (Python SDK)
-pip install use-env[azure]
+pip install use-env-insurgence[azure]
 
 # AWS Secrets Manager
-pip install use-env[aws]
+pip install use-env-insurgence[aws]
 
 # Google Cloud Secret Manager
-pip install use-env[gcp]
+pip install use-env-insurgence[gcp]
 
 # HashiCorp Vault
-pip install use-env[vault]
+pip install use-env-insurgence[vault]
 
 # 1Password Connect
-pip install use-env[1password]
+pip install use-env-insurgence[1password]
 
 # All cloud providers
-pip install use-env[all]
+pip install use-env-insurgence[all]
 ```
 
 ## Quick Start
@@ -95,23 +95,23 @@ API_KEY=${env:MY_API_KEY}
 # File-based secret (Docker secrets, etc.)
 DB_PASSWORD=${file:/run/secrets/db_password}
 
-# Azure Key Vault (requires use-env[azure])
+# Azure Key Vault (requires use-env-insurgence[azure])
 # Format: ${azure-keyvault:<vault_name>/<secret_name>}
 SECRET_KEY=${azure-keyvault:my-keyvault/db-password}
 
-# AWS Secrets Manager (requires use-env[aws])
+# AWS Secrets Manager (requires use-env-insurgence[aws])
 # Format: ${aws-secrets:<region>/<secret_name>}
 DB_PASSWORD=${aws-secrets:us-east-1/my-app/database}
 
-# GCP Secret Manager (requires use-env[gcp])
+# GCP Secret Manager (requires use-env-insurgence[gcp])
 # Format: ${gcp-secrets:<project_id>/<secret_name>}
 API_KEY=${gcp-secrets:my-project/api-key}
 
-# HashiCorp Vault (requires use-env[vault])
+# HashiCorp Vault (requires use-env-insurgence[vault])
 # Format: ${vault:<mount_point>/<path>}
 DB_PASSWORD=${vault:secret/my-app/database}
 
-# 1Password (requires use-env[1password])
+# 1Password (requires use-env-insurgence[1password])
 # Format: ${1password:<vault_id>/<item_id>/<field>}
 API_KEY=${1password:vault-id/item-id/api-key}
 ```
@@ -170,7 +170,7 @@ API_KEY=${file:./secrets/api_key.txt}
 
 ### Azure Key Vault (`azure-keyvault`)
 
-Requires: `pip install use-env[azure]`
+Requires: `pip install use-env-insurgence[azure]`
 
 ```bash
 # Format: ${azure-keyvault:<vault_name>/<secret_name>}
@@ -192,7 +192,7 @@ providers:
 
 ### AWS Secrets Manager (`aws-secrets`)
 
-Requires: `pip install use-env[aws]`
+Requires: `pip install use-env-insurgence[aws]`
 
 ```bash
 # Format: ${aws-secrets:<region>/<secret_name>}
@@ -213,7 +213,7 @@ providers:
 
 ### GCP Secret Manager (`gcp-secrets`)
 
-Requires: `pip install use-env[gcp]`
+Requires: `pip install use-env-insurgence[gcp]`
 
 ```bash
 # Format: ${gcp-secrets:<project_id>/<secret_name>}
@@ -233,7 +233,7 @@ providers:
 
 ### HashiCorp Vault (`vault`)
 
-Requires: `pip install use-env[vault]`
+Requires: `pip install use-env-insurgence[vault]`
 
 ```bash
 # Format: ${vault:<mount_point>/<path>}
@@ -257,7 +257,7 @@ providers:
 
 ### 1Password Connect (`1password`)
 
-Requires: `pip install use-env[1password]`
+Requires: `pip install use-env-insurgence[1password]`
 
 ```bash
 # Format: ${1password:<vault_id>/<item_id>/<field>}

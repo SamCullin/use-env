@@ -1,5 +1,5 @@
 [project]
-name = "use-env"
+name = "use-env-insurgence"
 version = "1.0.1"
 description = "Environment file processor with extensible secret providers"
 readme = "README.md"
@@ -63,11 +63,11 @@ vault = [
 
 # All cloud providers
 all = [
-    "use-env[azure]",
-    "use-env[aws]",
-    "use-env[gcp]",
-    "use-env[vault]",
-    "use-env[1password]",
+    "use-env-insurgence[azure]",
+    "use-env-insurgence[aws]",
+    "use-env-insurgence[gcp]",
+    "use-env-insurgence[vault]",
+    "use-env-insurgence[1password]",
 ]
 
 [project.scripts]
