@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.0.2 (2026-03-03)
+
+### Bug Fixes
+
+- **pypi**: Rename distribution to use-env-insurgence
+  ([`3ba087e`](https://github.com/SamCullin/use-env/commit/3ba087e0532458a663f47f574c5798783adf788c))
+
+
 ## v1.0.1 (2026-03-03)
 
 ### Bug Fixes
