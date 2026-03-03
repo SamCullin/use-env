@@ -1,7 +1,6 @@
 # use-env
 
 [![Release](https://github.com/SamCullin/use-env/actions/workflows/release.yml/badge.svg)](https://github.com/SamCullin/use-env/actions/workflows/release.yml)
-[![Publish](https://github.com/SamCullin/use-env/actions/workflows/publish.yml/badge.svg)](https://github.com/SamCullin/use-env/actions/workflows/publish.yml)
 [![CI](https://github.com/SamCullin/use-env/actions/workflows/ci.yml/badge.svg)](https://github.com/SamCullin/use-env/actions/workflows/ci.yml)
 [![PyPI version](https://badge.fury.io/py/use-env.svg)](https://badge.fury.io/py/use-env)
 [![GitHub Release](https://img.shields.io/github/v/release/SamCullin/use-env)](https://github.com/SamCullin/use-env/releases)
