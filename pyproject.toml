@@ -1,6 +1,6 @@
 [project]
 name = "use-env-insurgence"
-version = "1.0.2"
+version = "1.0.3"
 description = "Environment file processor with extensible secret providers"
 readme = "README.md"
 requires-python = ">=3.12"

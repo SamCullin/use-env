@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.0.3 (2026-03-03)
+
+### Bug Fixes
+
+- **build**: Configure hatch wheel package selection
+  ([`c8ee352`](https://github.com/SamCullin/use-env/commit/c8ee352894daf6f02e34db373e9ae745b77ed117))
+
+
 ## v1.0.2 (2026-03-03)
 
 ### Bug Fixes
