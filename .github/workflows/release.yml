@@ -36,18 +36,70 @@ jobs:
         run: |
           semantic-release version --no-commit --no-tag --no-push --no-vcs-release --skip-build
 
+      - name: Build release PR metadata
+        id: release_meta
+        run: |
+          if git diff --quiet; then
+            echo "No release changes detected. Skipping release PR update."
+            echo "should_release=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if ! git diff --name-only | grep -q '^CHANGELOG\.md$'; then
+            echo "Expected CHANGELOG.md to be updated for release PR."
+            exit 1
+          fi
+
+          if ! git diff --name-only | grep -q '^pyproject\.toml$'; then
+            echo "Expected pyproject.toml to be updated for release PR."
+            exit 1
+          fi
+
+          VERSION="$(python - <<'PY'
+          import tomllib
+          with open('pyproject.toml', 'rb') as f:
+              print(tomllib.load(f)['project']['version'])
+          PY
+          )"
+
+          LAST_TAG="$(git describe --tags --abbrev=0 --match 'v*' 2>/dev/null || true)"
+          if [ -n "$LAST_TAG" ]; then
+            RANGE="${LAST_TAG}..HEAD"
+          else
+            RANGE="HEAD"
+          fi
+
+          git log --no-merges --pretty='- %s (%h)' ${RANGE} > /tmp/release_commits.md
+          if [ ! -s /tmp/release_commits.md ]; then
+            echo "- No user-facing commits detected." > /tmp/release_commits.md
+          fi
+
+          {
+            echo "## Release v${VERSION}"
+            echo
+            echo "This PR prepares release \`v${VERSION}\`."
+            echo
+            echo "### Included commits"
+            cat /tmp/release_commits.md
+            echo
+            echo "### Files updated by release automation"
+            echo "- CHANGELOG.md"
+            echo "- pyproject.toml"
+          } > /tmp/release_pr_body.md
+
+          echo "should_release=true" >> "$GITHUB_OUTPUT"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+
       - name: Create or update release PR
+        if: steps.release_meta.outputs.should_release == 'true'
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "chore(release): prepare release"
           branch: "release/${{ github.ref_name }}"
           base: "${{ github.ref_name }}"
-          title: "chore(release): prepare release"
-          body: |
-            Automated release PR.
-
-            This branch is refreshed from `${{ github.ref_name }}` and includes version/changelog updates from semantic-release.
+          title: "chore(release): v${{ steps.release_meta.outputs.version }}"
+          body-path: /tmp/release_pr_body.md
           labels: release
           delete-branch: false
 
@@ -55,8 +107,11 @@ jobs:
     if: |
       github.event_name == 'pull_request' &&
       github.event.pull_request.merged == true &&
-      startsWith(github.event.pull_request.head.ref, 'release/')
+      startsWith(github.event.pull_request.head.ref, 'release/') &&
+      contains(github.event.pull_request.labels.*.name, 'release')
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.compute_tag.outputs.tag }}
     steps:
       - name: Checkout merged commit
         uses: actions/checkout@v4
@@ -64,7 +119,13 @@ jobs:
           ref: ${{ github.event.pull_request.merge_commit_sha }}
           fetch-depth: 0
 
-      - name: Create and push version tag
+      - name: Configure git author
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Compute tag
+        id: compute_tag
         run: |
           VERSION="$(python - <<'PY'
           import tomllib
@@ -72,7 +133,11 @@ jobs:
               print(tomllib.load(f)['project']['version'])
           PY
           )"
-          TAG="v${VERSION}"
+          echo "tag=v${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Create and push version tag
+        run: |
+          TAG="${{ steps.compute_tag.outputs.tag }}"
 
           if git rev-parse "${TAG}" >/dev/null 2>&1; then
             echo "Tag ${TAG} already exists. Skipping."
@@ -81,3 +146,40 @@ jobs:
 
           git tag "${TAG}" "${{ github.event.pull_request.merge_commit_sha }}"
           git push origin "${TAG}"
+
+  publish_release:
+    if: github.event_name == 'pull_request' && needs.tag_release.result == 'success'
+    needs: [tag_release]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout tagged commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.tag_release.outputs.tag }}
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Build package
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+          python -m build
+
+      - name: Publish to PyPI
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+        run: |
+          python -m twine upload dist/*
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.tag_release.outputs.tag }}
+          generate_release_notes: true
+          files: dist/*
