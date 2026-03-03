@@ -1,0 +1,15 @@
+# <type>(<scope>): <subject>
+#
+# <body>
+#
+# <footer>
+#
+# Types: feat, fix, docs, style, refactor, perf, test, chore
+# Examples:
+#   feat(provider): add AWS Secrets Manager support
+#   fix: resolve environment variable caching issue
+#   docs: update installation instructions
+#
+# Breaking changes:
+#   feat!: remove deprecated provider
+#   BREAKING CHANGE: description of the change
