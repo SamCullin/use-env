@@ -102,7 +102,7 @@ warn_unused_configs = true
 disallow_untyped_defs = true
 
 [tool.semantic_release]
-version_variable = "pyproject.toml:version"
+version_toml = ["pyproject.toml:project.version"]
 branch = "main"
 upload_to_pypi = true
 upload_to_release = true
