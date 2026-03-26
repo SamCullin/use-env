@@ -15,17 +15,45 @@ Providers are plugins that resolve secret references from various sources. Any e
 import re
 from use_env.providers import Provider, ProviderInfo, ProviderRegistry, ProviderError
 
-class MyCustomProvider(Provider):
-    """
-    My custom secret provider for Example Service.
-    """
-    info = ProviderInfo(
-        name="my_custom",
-        description="My custom provider for Example Service",
-        version="1.0.0",
-        author="Your Name",
-        reference_pattern=r"^(?P<service>[^/]+)/(?P<secret>.+)$"
-    )
+    class MyCustomProvider(Provider):
+        """
+        My custom secret provider for Example Service.
+        """
+        info = ProviderInfo(
+            name="my_custom",
+            description="My custom provider for Example Service",
+            version="1.0.0",
+            author="Your Name",
+            reference_pattern=r"^(?P<service>[^/]+)/(?P<secret>.+)$",
+            help=\"\"\"\
+Setup
+-----
+
+1. Install the provider package and any required extras.
+2. Configure credentials (for example via environment variables or a cloud CLI).
+
+Configuration
+-------------
+
+Example `.use-env.yaml` snippet:
+
+```yaml
+providers:
+  - name: my_custom
+    type: my_custom
+    enabled: true
+    config:
+      api_url: \"https://api.example.com\"
+```
+
+Usage in env files
+------------------
+
+```env
+MY_SECRET=${my_custom:service/secret-name}
+```\
+\"\"\"
+        )
 
     async def resolve(self, reference: str) -> str:
         """

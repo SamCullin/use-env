@@ -29,6 +29,7 @@ class TestProviderInfo:
         assert info.version == "1.0.0"
         assert info.author == ""
         assert info.reference_pattern == ""
+        assert info.help == ""
 
 
 class TestProvider:

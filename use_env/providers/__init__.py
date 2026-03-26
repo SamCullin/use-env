@@ -40,6 +40,7 @@ class ProviderInfo:
     version: str = "1.0.0"
     author: str = ""
     reference_pattern: str = ""
+    help: str = ""
 
 
 @dataclass
