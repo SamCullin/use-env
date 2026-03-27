@@ -164,7 +164,6 @@ def register():
 
 if __name__ == "__main__":
     # Example usage
-    import asyncio
 
     from use_env.providers import ProviderRegistry
 

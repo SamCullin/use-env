@@ -13,9 +13,9 @@ from pathlib import Path
 
 import yaml
 from rich import print as rprint
+from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.table import Table
-from rich.markdown import Markdown
 
 from .config import UseEnvConfig
 from .loader import EnvFileError, EnvLoader

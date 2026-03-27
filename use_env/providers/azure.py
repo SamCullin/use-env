@@ -56,9 +56,9 @@ class AzureKeyVaultProvider(Provider):
             "    type: azure-keyvault\n"
             "    enabled: true\n"
             "    config:\n"
-            "      tenant_id: \"<tenant-guid>\"  # optional\n"
-            "      client_id: \"<app-registration-guid>\"  # optional\n"
-            "      client_secret: \"<client-secret>\"  # optional\n"
+            '      tenant_id: "<tenant-guid>"  # optional\n'
+            '      client_id: "<app-registration-guid>"  # optional\n'
+            '      client_secret: "<client-secret>"  # optional\n'
             "```\n\n"
             "Usage in env files:\n"
             "- `${azure-keyvault:my-vault/my-secret}`\n"
