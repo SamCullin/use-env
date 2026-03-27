@@ -11,7 +11,7 @@ import asyncio
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from .config import UseEnvConfig
 from .providers import Provider, ProviderError, ProviderRegistry
@@ -210,7 +210,7 @@ class EnvLoader:
         self,
         references: list[SecretReference],
         strict: bool,
-    ) -> tuple[dict[str, str], list["ResolutionError"]]:
+    ) -> tuple[dict[str, str], list[ResolutionError]]:
         """Resolve all secret references, using concurrency where possible.
 
         This method keeps the existing error semantics:
@@ -246,7 +246,8 @@ class EnvLoader:
                 errors.append(error)
                 continue
 
-            resolved_values[f"{ref.provider_name}://{ref.reference}"] = result
+            value = cast(str, result)
+            resolved_values[f"{ref.provider_name}://{ref.reference}"] = value
 
         return resolved_values, errors
 
