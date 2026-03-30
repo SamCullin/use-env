@@ -512,7 +512,7 @@ wheels = [
 
 [[package]]
 name = "env-use"
-version = "1.0.2"
+version = "1.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "pydantic" },

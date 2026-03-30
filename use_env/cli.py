@@ -13,6 +13,7 @@ from pathlib import Path
 
 import yaml
 from rich import print as rprint
+from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.table import Table
 
@@ -59,6 +60,7 @@ Examples:
   use-env .env.prod -o .env           # Output to specific file
   use-env .env.staging --strict       # Fail on any resolution errors
   use-env --list-providers            # List available providers
+  use-env --provider-help azure-keyvault  # Show help for a provider
   use-env --config .use-env.yaml      # Use specific config file
   cat .env.dev | use-env              # Pipe input, output to stdout
   cat .env.dev | use-env > .env       # Pipe input, save output to .env
@@ -97,6 +99,12 @@ Examples:
     )
 
     parser.add_argument(
+        "--provider-help",
+        metavar="PROVIDER",
+        help="Show detailed help for a provider",
+    )
+
+    parser.add_argument(
         "--version",
         action="version",
         version="use-env 1.0.0",
@@ -111,6 +119,13 @@ Examples:
     )
 
     args = parser.parse_args()
+
+    # Discover plugin-based providers registered via entry points
+    ProviderRegistry.discover_plugins()
+
+    if args.provider_help:
+        _display_provider_help(args.provider_help)
+        return 0
 
     if args.list_providers:
         _display_providers()
@@ -169,6 +184,42 @@ Examples:
         config_path=args.config,
         verbose=args.verbose,
     )
+
+
+def _display_provider_help(provider_name: str) -> None:
+    """Display detailed help information for a specific provider.
+
+    Providers can populate ProviderInfo.help with setup, configuration,
+    and credential instructions. This function renders that help.
+    """
+    providers = {p.name: p for p in ProviderRegistry.list_providers()}
+
+    if provider_name not in providers:
+        rprint(f"[red]Provider '{provider_name}' is not registered.[/red]")
+        if providers:
+            available = ", ".join(sorted(providers))
+            rprint(f"[yellow]Available providers:[/yellow] {available}")
+        return
+
+    info = providers[provider_name]
+
+    header = Table(show_header=False, box=None)
+    header.add_row("Name", f"[cyan]{info.name}[/cyan]")
+    header.add_row("Description", info.description)
+    if getattr(info, "version", ""):
+        header.add_row("Version", info.version)
+    if getattr(info, "author", ""):
+        header.add_row("Author", info.author)
+
+    rprint(Panel(header, title="Provider", expand=False))
+
+    help_text = getattr(info, "help", "") or (
+        "This provider has not provided additional help.\n\n"
+        "Refer to the provider documentation for setup, configuration, "
+        "and credential details."
+    )
+
+    rprint(Panel(Markdown(help_text), title="Usage & Setup"))
 
 
 def _display_providers() -> None:

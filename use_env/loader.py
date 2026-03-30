@@ -7,10 +7,11 @@ and resolving them using registered providers.
 
 from __future__ import annotations
 
+import asyncio
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from .config import UseEnvConfig
 from .providers import Provider, ProviderError, ProviderRegistry
@@ -120,26 +121,7 @@ class EnvLoader:
 
         await self._initialize_providers()
 
-        resolved_values: dict[str, str] = {}
-        errors: list[ResolutionError] = []
-
-        for ref in references:
-            try:
-                value = await self._resolve_reference(ref)
-                resolved_values[f"{ref.provider_name}://{ref.reference}"] = value
-            except ProviderError as exc:
-                error = ResolutionError(
-                    key=ref.key,
-                    provider=ref.provider_name,
-                    reference=ref.reference,
-                    message=str(exc),
-                )
-                if strict:
-                    raise EnvFileError(f"Failed to resolve {ref.key}: {exc}") from exc
-                errors.append(error)
-
-        if errors and strict:
-            raise EnvFileError(f"Encountered {len(errors)} error(s) while resolving secrets")
+        resolved_values, errors = await self._resolve_all_references(references, strict)
 
         resolved_content = self._replace_references(content, resolved_values)
 
@@ -223,6 +205,51 @@ class EnvLoader:
         """Register a provider from configuration."""
         instance = ProviderRegistry.get(config.type, config.config)
         self._providers[config.name] = instance
+
+    async def _resolve_all_references(
+        self,
+        references: list[SecretReference],
+        strict: bool,
+    ) -> tuple[dict[str, str], list[ResolutionError]]:
+        """Resolve all secret references, using concurrency where possible.
+
+        This method keeps the existing error semantics:
+        - In strict mode, the first resolution failure raises EnvFileError.
+        - In non-strict mode, errors are collected and returned.
+        """
+        resolved_values: dict[str, str] = {}
+        errors: list[ResolutionError] = []
+
+        if not references:
+            return resolved_values, errors
+
+        # Launch all resolutions concurrently
+        tasks = [self._resolve_reference(ref) for ref in references]
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+
+        for ref, result in zip(references, results):
+            if isinstance(result, Exception):
+                # Normalize to ProviderError when possible
+                exc = result
+                message = str(exc)
+
+                error = ResolutionError(
+                    key=ref.key,
+                    provider=ref.provider_name,
+                    reference=ref.reference,
+                    message=message,
+                )
+
+                if strict:
+                    raise EnvFileError(f"Failed to resolve {ref.key}: {message}") from exc
+
+                errors.append(error)
+                continue
+
+            value = cast(str, result)
+            resolved_values[f"{ref.provider_name}://{ref.reference}"] = value
+
+        return resolved_values, errors
 
     async def _resolve_reference(self, reference: SecretReference) -> str:
         """Resolve a single secret reference."""

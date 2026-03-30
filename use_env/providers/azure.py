@@ -43,6 +43,27 @@ class AzureKeyVaultProvider(Provider):
         version="1.0.0",
         author="use-env contributors",
         reference_pattern=r"^(?P<vault_name>[^/]+)/(?P<secret_name>.+)$",
+        help=(
+            "Azure Key Vault provider using the Azure SDK.\n\n"
+            "Setup:\n"
+            "- Install extras: `pip install use-env[azure]`.\n"
+            "- Ensure authentication works via `DefaultAzureCredential` "
+            "(environment variables, managed identity, or Azure CLI login).\n\n"
+            "Configuration (optional, in `.use-env.yaml`):\n"
+            "```yaml\n"
+            "providers:\n"
+            "  - name: azure-keyvault\n"
+            "    type: azure-keyvault\n"
+            "    enabled: true\n"
+            "    config:\n"
+            '      tenant_id: "<tenant-guid>"  # optional\n'
+            '      client_id: "<app-registration-guid>"  # optional\n'
+            '      client_secret: "<client-secret>"  # optional\n'
+            "```\n\n"
+            "Usage in env files:\n"
+            "- `${azure-keyvault:my-vault/my-secret}`\n"
+            "- `${azure-keyvault://my-vault/my-secret}`\n"
+        ),
     )
 
     def __init__(self) -> None:
