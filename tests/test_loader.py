@@ -190,6 +190,25 @@ ANOTHER_VALID=value2
             await loader.close()
 
     @pytest.mark.asyncio
+    async def test_load_with_shell_provider(self, temp_dir):
+        """Test resolving the shell shorthand through the loader."""
+        from use_env.providers.built_in import register_built_in_providers
+
+        register_built_in_providers()
+        input_file = temp_dir / ".env.dev"
+        output_file = temp_dir / ".env"
+        input_file.write_text('GREETING=${! echo "Hello" }\n')
+
+        loader = EnvLoader()
+        result = await loader.load(str(input_file), str(output_file))
+
+        assert result.secrets_resolved == 1
+        assert result.resolved_content == "GREETING=Hello\n"
+        assert output_file.read_text() == "GREETING=Hello\n"
+
+        await loader.close()
+
+    @pytest.mark.asyncio
     async def test_load_with_file_provider(self, temp_dir, env_file, secret_file):
         """Test loading a file with file provider."""
         # Import to register providers

@@ -25,6 +25,9 @@ use-env --list-providers
 
 # Use a specific configuration file
 use-env .env.dev --config /path/to/config.yaml
+
+# Show detailed usage guidance for an LLM
+use-env --llm-help
 ```
 
 ### Supported File Formats
@@ -42,6 +45,7 @@ MULTI_WORD_KEY=word1 word2 word3
 # References are replaced
 API_KEY=${env:EXISTING_VAR}
 DB_PASSWORD=${file:/run/secrets/db_password}
+GREETING=${! echo "Hello" }
 VAULT_SECRET=${vault:resource-group/keyvault/secret-name}
 ```
 
@@ -99,6 +103,32 @@ API_URL=${env:API_URL:-https://default.example.com}
 ```
 
 **Note**: The fallback syntax is not yet implemented.
+
+#### Shell Provider (`shell`)
+
+Execute a command through the current system shell and use its standard output:
+
+```bash
+GREETING=${! echo "Hello" }
+CURRENT_BRANCH=${! git branch --show-current }
+```
+
+The provider form `${shell:command}` is also supported. Output is trimmed at the
+start and end, while internal newlines are preserved. Commands inherit the
+current working directory and environment, run with the permissions of
+`use-env`, and have a default timeout of 30 seconds. A non-zero exit status or
+timeout is a resolution error. Only use shell references in trusted input files.
+
+Configure the timeout in `.use-env.yaml` when required:
+
+```yaml
+providers:
+  - name: shell
+    type: shell
+    enabled: true
+    config:
+      timeout: 10
+```
 
 #### File Provider (`file`)
 
