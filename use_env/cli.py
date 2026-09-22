@@ -18,6 +18,7 @@ from rich.panel import Panel
 from rich.table import Table
 
 from .config import UseEnvConfig
+from .llm_help import LLM_HELP_TEXT
 from .loader import EnvFileError, EnvLoader
 from .providers import ProviderRegistry
 
@@ -61,6 +62,7 @@ Examples:
   use-env .env.staging --strict       # Fail on any resolution errors
   use-env --list-providers            # List available providers
   use-env --provider-help azure-keyvault  # Show help for a provider
+  use-env --llm-help                  # Show detailed usage for an LLM
   use-env --config .use-env.yaml      # Use specific config file
   cat .env.dev | use-env              # Pipe input, output to stdout
   cat .env.dev | use-env > .env       # Pipe input, save output to .env
@@ -105,6 +107,12 @@ Examples:
     )
 
     parser.add_argument(
+        "--llm-help",
+        action="store_true",
+        help="Show detailed usage instructions for an LLM",
+    )
+
+    parser.add_argument(
         "--version",
         action="version",
         version="use-env 1.0.0",
@@ -119,6 +127,10 @@ Examples:
     )
 
     args = parser.parse_args()
+
+    if args.llm_help:
+        _display_llm_help()
+        return 0
 
     # Discover plugin-based providers registered via entry points
     ProviderRegistry.discover_plugins()
@@ -184,6 +196,11 @@ Examples:
         config_path=args.config,
         verbose=args.verbose,
     )
+
+
+def _display_llm_help() -> None:
+    """Display detailed plain-text usage guidance for language models."""
+    sys.stdout.write(f"{LLM_HELP_TEXT.rstrip()}\n")
 
 
 def _display_provider_help(provider_name: str) -> None:

@@ -7,6 +7,7 @@ from . import ProviderRegistry
 from .azure import AzureKeyVaultProvider
 from .env import EnvironmentProvider
 from .file import FileProvider
+from .shell import ShellProvider
 
 # Track whether providers have been registered
 _registered = False
@@ -29,6 +30,8 @@ def register_built_in_providers() -> None:
         ProviderRegistry.register(EnvironmentProvider)
     if not ProviderRegistry.is_registered("file"):
         ProviderRegistry.register(FileProvider)
+    if not ProviderRegistry.is_registered("shell"):
+        ProviderRegistry.register(ShellProvider)
 
     _registered = True
 

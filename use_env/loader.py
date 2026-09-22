@@ -54,9 +54,9 @@ class EnvLoader:
         print(result.resolved_content)
     """
 
-    # Pattern to match ${provider://reference} or ${provider:reference}
+    # Pattern to match provider references and ${! command } shell references.
     REFERENCE_PATTERN = re.compile(
-        r"\$\{(?P<provider>[a-zA-Z][a-zA-Z0-9_-]*):(?P<reference>[^}]+)\}"
+        r"\$\{(?:(?P<provider>[a-zA-Z][a-zA-Z0-9_-]*):(?P<reference>[^}\n]+)|!(?P<command>[^}\n]+))\}"
     )
 
     def __init__(self, config: UseEnvConfig | None = None) -> None:
@@ -182,10 +182,11 @@ class EnvLoader:
             matches = self.REFERENCE_PATTERN.finditer(var.value)
 
             for match in matches:
+                provider_name, reference = self._reference_parts(match)
                 references.append(
                     SecretReference(
-                        provider_name=match.group("provider"),
-                        reference=match.group("reference"),
+                        provider_name=provider_name,
+                        reference=reference,
                         key=var.key,
                         start_pos=match.start(),
                         end_pos=match.end(),
@@ -193,6 +194,13 @@ class EnvLoader:
                 )
 
         return references
+
+    @staticmethod
+    def _reference_parts(match: re.Match[str]) -> tuple[str, str]:
+        """Return a provider name and normalised reference from a match."""
+        provider_name = match.group("provider") or "shell"
+        reference = match.group("reference") or match.group("command") or ""
+        return provider_name, reference.strip()
 
     async def _initialize_providers(self) -> None:
         """Initialize all configured providers."""
@@ -276,8 +284,7 @@ class EnvLoader:
         """Replace all secret references with their resolved values."""
 
         def replace_match(match: re.Match) -> str:
-            provider = match.group("provider")
-            reference = match.group("reference")
+            provider, reference = self._reference_parts(match)
             key = f"{provider}://{reference}"
 
             return resolved_values.get(key, match.group(0))

@@ -25,7 +25,7 @@
 ## Features
 
 - **Extensible Provider System**: Add custom providers for any secret source
-- **Built-in Providers**: Support for environment variables and files (no external dependencies)
+- **Built-in Providers**: Support for environment variables, files, and trusted shell commands (no external dependencies)
 - **Optional Cloud Providers**: Azure, AWS, GCP, HashiCorp Vault, 1Password (install only what you need)
 - **Configuration**: YAML-based configuration for custom providers
 - **Type Safety**: Written in Python with full type annotations
@@ -78,6 +78,9 @@ use-env .env.prod -o .env.production
 
 # List available providers
 use-env --list-providers
+
+# Show detailed usage guidance for an LLM
+use-env --llm-help
 ```
 
 ### Environment File Example
@@ -94,6 +97,9 @@ API_KEY=${env:MY_API_KEY}
 
 # File-based secret (Docker secrets, etc.)
 DB_PASSWORD=${file:/run/secrets/db_password}
+
+# Execute a trusted shell command and use its stdout
+GREETING=${! echo "Hello" }
 
 # Azure Key Vault (requires env-use[azure])
 # Format: ${azure-keyvault:<vault_name>/<secret_name>}
@@ -165,6 +171,20 @@ DB_PASSWORD=${file:/run/secrets/db_password}
 # Relative path (relative to config or current directory)
 API_KEY=${file:./secrets/api_key.txt}
 ```
+
+### Shell Provider (`shell`)
+
+Execute a trusted shell command and use its trimmed standard output:
+
+```bash
+GREETING=${! echo "Hello" }
+CURRENT_BRANCH=${shell:git branch --show-current}
+```
+
+Shell references inherit the current environment and working directory and
+run with the permissions of the `use-env` process. Commands have a default
+30-second timeout, and non-zero exit statuses fail resolution. Only use shell
+references with trusted input files.
 
 ## Optional Cloud Providers
 
