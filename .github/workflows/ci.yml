@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main, master]
+  push:
+    branches: [main, master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12", "3.13"]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up uv with Python ${{ matrix.python-version }}
+        uses: astral-sh/setup-uv@v3
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          uv sync --all-extras --dev
+
+      - name: Run Pyrefly type checking
+        run: uv run pyrefly check use_env/ tests/
+
+      - name: Run ruff check
+        run: uv run ruff check use_env/ tests/
+
+      - name: Run ruff format check
+        run: uv run ruff format --check use_env/ tests/
+
+      - name: Run pytest with coverage
+        run: uv run pytest --cov=use_env --cov-report=xml --cov-report=term tests/
+
+      - name: Upload coverage report
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: false
